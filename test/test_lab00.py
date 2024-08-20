@@ -16,7 +16,6 @@ for file in os.listdir(src_dir):
 
 # Parametrize the test function to run for each solution module
 @pytest.mark.parametrize("solution_module", solution_modules)
-#@pytest.mark.parametrize("nums, expected", test_cases)
 def test_missing_number(solution_module):
 
     # Define the test cases
@@ -31,4 +30,3 @@ def test_missing_number(solution_module):
     for nums, expected in test_cases:
         assert solution_module.solution(nums) == expected
 
-    #assert solution_module.solution(nums) == expected
