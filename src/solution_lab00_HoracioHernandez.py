@@ -1,4 +1,4 @@
-def solution(n):
+def solution(n) -> int:
     n.sort()
     for i in range(len(n)-1):
         diff = n[i+1] - n[i]
@@ -11,4 +11,3 @@ def solution(n):
     #for i in range(len(n)):
     #   if i != n[i]:
     #       return i
-    #return len(n)
