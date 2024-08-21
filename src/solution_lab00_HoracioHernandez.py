@@ -6,6 +6,7 @@ def solution(n):
             return n[i] + 1
     return len(n)
 
+### A slighty different approach that I thought of later.
     #n.sort()
     #for i in range(len(n)):
     #   if i != n[i]:
