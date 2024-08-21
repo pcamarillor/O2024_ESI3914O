@@ -21,6 +21,9 @@ The repository is organized into the following folders:
     │ ├── Lab01/
     │ ├── Lab02/
     │ └── ...
+    ├── examples/
+    │ ├── example_1.py
+    │ └── ...
     ├── Resources/
     │ ├── DataSets/
     │ └── ...
