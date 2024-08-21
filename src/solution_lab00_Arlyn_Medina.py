@@ -1,7 +1,12 @@
 def solution(nums) -> int:
     n = len(nums)
-    total_sum = n * (n + 1) // 2
-    actual_sum = sum(nums)
+    actual_sum = 0
+    nums_sum = 0
     
-    return total_sum - actual_sum
-
+    for i in range(n + 1):
+        actual_sum += i
+    
+    for i in range(n):
+        nums_sum += nums[i]
+    
+    return actual_sum - nums_sum
