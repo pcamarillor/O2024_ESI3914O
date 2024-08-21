@@ -27,6 +27,6 @@ def test_missing_number(solution_module):
     ]
 
     # Run each test case
-    for nums, expected in test_cases:
+    for nums, expected in test_cases :
         assert solution_module.solution(nums) == expected
 
