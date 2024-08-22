@@ -8,7 +8,7 @@ solution_modules = []
 src_dir = os.path.join(os.path.dirname(__file__), '..', 'src')
 
 for file in os.listdir(src_dir):
-    if file.startswith('solution') and file.endswith('.py'):
+    if file.lower().startswith('solution') and file.endswith('.py'):
         module_name = file[:-3]  # Remove the .py extension
         solution_modules.append(importlib.import_module(f'src.{module_name}'))
 
@@ -29,4 +29,3 @@ def test_missing_number(solution_module):
     # Run each test case
     for nums, expected in test_cases:
         assert solution_module.solution(nums) == expected
-
