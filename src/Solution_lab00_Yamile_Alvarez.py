@@ -1,5 +1,3 @@
-#O(n)
-
 def solution(num) -> int:
     n = len(num)  
     total = n * (n + 1) // 2  
