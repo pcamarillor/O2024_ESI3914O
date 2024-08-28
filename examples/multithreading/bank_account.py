@@ -1,5 +1,6 @@
 import threading
-from functools import reduce
+import time
+import random
 
 # OOP: Define a BankAccount class to handle deposits and withdrawals
 class BankAccount:
@@ -9,11 +10,13 @@ class BankAccount:
 
     def deposit(self, amount):
         with self.lock:
+            time.sleep(random.randint(0, 10))  # Simulate delay
             self.balance += amount
             print(f"Deposited {amount}, new balance is {self.balance}")
 
     def withdraw(self, amount):
         with self.lock:
+            time.sleep(random.randint(0, 10))  # Simulate delay
             if amount <= self.balance:
                 self.balance -= amount
                 print(f"Withdrew {amount}, new balance is {self.balance}")
@@ -24,10 +27,19 @@ class BankAccount:
         with self.lock:
             return self.balance
 
-def process_transactions(transactions):
+    def transfer(self, target_account, amount):
+        with self.lock:
+            if amount <= self.balance:
+                self.withdraw(amount)
+                target_account.deposit(amount)
+                print(f"Transferred {amount} to target account. New balance: {self.balance}")
+            else:
+                print("Insufficient funds to transfer")
+
+def process_transactions(account, transactions):
     threads = []
-    for function, amount in transactions:
-        t = threading.Thread(target=function, args=(account, amount))
+    for function, *args in transactions:
+        t = threading.Thread(target=function, args=(account, *args))
         threads.append(t)
         t.start()
 
@@ -39,11 +51,16 @@ def deposit(account, amount):
 
 def withdraw(account, amount):
     account.withdraw(amount)
+
+def transfer(account, target_account, amount):
+    account.transfer(target_account, amount)
+
 # Example usage
 if __name__ == "__main__":
-    account = BankAccount(1000)  # Create an account with an initial balance
+    account_a = BankAccount(1000)  # Create an account with an initial balance
     account_b = BankAccount(3000)
-    transactions = [
+
+    transactions_a = [
         (deposit, 200),
         (withdraw, 150),
         (deposit, 300),
@@ -51,8 +68,29 @@ if __name__ == "__main__":
         (deposit, 100)
     ]
 
-    # Process transactions using multiple threads
-    process_transactions(transactions)
+    transactions_b = [
+        (deposit, 500),
+        (withdraw, 400),
+        (deposit, 800),
+        (withdraw, 300)
+    ]
 
-    # Print the final balance
-    print(f"Final Balance: {account.get_balance()}")
+    # Separate list for transfers
+    transfer_transactions = [
+        (transfer, account_b, 200),  # Transfer from account_a to account_b
+        (transfer, account_a, 300)   # Transfer from account_b to account_a
+    ]
+
+    # Process transactions on account_a
+    process_transactions(account_a, transactions_a)
+
+    # Process transactions on account_b
+    process_transactions(account_b, transactions_b)
+
+    # Process transfer transactions
+    process_transactions(account_a, transfer_transactions)  # Transfers involving account_a
+    process_transactions(account_b, transfer_transactions)  # Transfers involving account_b
+
+    # Print the final balances
+    print(f"Final Balance of Account A: {account_a.get_balance()}")
+    print(f"Final Balance of Account B: {account_b.get_balance()}")
