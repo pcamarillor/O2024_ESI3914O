@@ -1,4 +1,6 @@
 def solution(nums) -> int:
-    for i in range(0,len(nums)+1):
+    n = len(nums)
+    for i in range(n + 1):
         if i not in nums:
             return i
+    return -1
