@@ -1,6 +1,11 @@
 
+# Install Java
+
+For example in MacOS:
+
+    brew install openjdk-8-jdk-headless
 
 
-# Run a PySpark application
+# Install PySpark library
 
     python3 -m pip install pyspark
