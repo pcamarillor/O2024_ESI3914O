@@ -1,4 +1,4 @@
-from pyspark import SparkContext
+from pyspark.sql import SparkSession
 
 # Initialize SparkContext
 spark = SparkSession.builder \
@@ -17,6 +17,7 @@ data = [
     ('banana', 1),
     ('orange', 2)
 ]
+sc = spark.sparkContext
 
 # Create an RDD from the list of key-value pairs
 rdd = sc.parallelize(data)
@@ -28,6 +29,7 @@ reduced_rdd = rdd.reduceByKey(lambda a, b: a + b)
 result = reduced_rdd.collect()
 for key, value in result:
     print(f"{key}: {value}")
-
+while(True):
+    pass
 # Stop the SparkContext
 sc.stop()

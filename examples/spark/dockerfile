@@ -1,0 +1,25 @@
+FROM jupyter/base-notebook:latest
+
+#Install java for Spark
+USER root
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk-headless -qq > /dev/null
+
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV SPARK_HOME=/opt/spark
+ENV PATH=$SPARK_HOME/bin:$PATH
+
+USER $NB_UID
+
+#Install Apache Spark
+RUN wget -q https://dlcdn.apache.org/spark/spark-3.5.2/spark-3.5.2-bin-hadoop3.tgz && \
+    tar xf spark-3.5.2-bin-hadoop3.tgz
+
+#Install python packages
+RUN pip install -q findspark pyspark py4j
+
+EXPOSE 8888
+
+CMD ["start-notebook.sh", "--NotebookApp.token=''"]
+
+

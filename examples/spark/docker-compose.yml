@@ -1,0 +1,13 @@
+version: '3'
+services:
+  spark-notebook:
+    build: .
+    container_name: Spark
+    ports:
+      - "8888:8888"
+    volumes:
+      - ${PWD}:/home/jovyan/work
+
+networks:
+  my-network:
+    driver: bridge
