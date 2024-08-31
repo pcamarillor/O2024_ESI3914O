@@ -16,7 +16,6 @@ log_rdd = sc.parallelize(log_data)
 
 def analyze_log(log_rdd):
     ip_count = log_rdd.map(lambda line: (line.split(" ")[0], 1)).reduceByKey(lambda a, b: a + b)
-    ip_count = ip_count.map(lambda ip_tuple: {ip_tuple[0]: ip_tuple[1]})
-    return ip_count.collect()
+    return ip_count.collectAsMap()
 
 print(analyze_log(log_rdd))
