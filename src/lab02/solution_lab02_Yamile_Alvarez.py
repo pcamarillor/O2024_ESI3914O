@@ -9,7 +9,7 @@ def analyze_log(log_rdd):
     #convertir a diccionario
     result = dict(countIp.collect())
     
-    return result 
+    return result
 
 
   
