@@ -7,8 +7,6 @@ from pyspark.sql import SparkSession
 from pyspark.rdd import RDD
 
 # Import the function to be tested
-from src.lab02.solution_lab02_Luis_Miguel_Fontes import analyze_log
-
 # Discover all solution modules in the src directory
 solution_modules = []
 src_dir = os.path.join(os.path.dirname(__file__), '..', 'src/lab02')

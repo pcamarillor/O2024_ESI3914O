@@ -1,9 +1,5 @@
 def analyze_log(log_rdd):
-    # Split each log line into parts
-    ips, _ = log_rdd.map(lambda line: line.split(' - - '))
+    ips = log_rdd.map(lambda line: line.split(' - - ')[0]).filter(lambda ip: ip.strip() != "")
+    ips_count = ips.map(lambda ip: (ip, 1)).reduceByKey(lambda a, b: a + b)
 
-    # Map each IP to a tuple for counting occurrences
-    ips_count = ips.map(lambda ips: (ips, 1)).reduceByKey(lambda a, b: a + b)
-
-    # Collect and return the results into a list of tuples containing an IP and its count.
-    return ips_count.collect()
+    return dict(ips_count.collect())
