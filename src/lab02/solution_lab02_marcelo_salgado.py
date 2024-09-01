@@ -1,6 +1,6 @@
 def analyze_log(log_rdd):
-    ip_rdd = log_rdd.map(lambda line: line.split(' ')[0])
-    ip_count_rdd = ip_rdd.map(lambda ip: (ip, 1))
-    ip_counts = ip_count_rdd.reduceByKey(lambda a, b: a + b)
-    result = ip_counts.collectAsMap()
-    return result
+    ips = log_rdd.map(lambda line: line.split(' ')[0])
+    valid_ips = ips.filter(lambda ip: ip.strip() != "")
+    ip_pairs = valid_ips.map(lambda ip: (ip, 1))
+    ip_counts = ip_pairs.reduceByKey(lambda a, b: a + b)
+    return ip_counts.collectAsMap()
