@@ -22,7 +22,7 @@ def test_analyze_log(solution_module):
     sc = SparkContext("local", "Test")
 
     # Load the log file into an RDD
-    log_file_path = "datasets/access.log"
+    log_file_path = "./../../datasets/access.log"
     log_rdd = sc.textFile(log_file_path)
 
     # Call the function to analyze the log
