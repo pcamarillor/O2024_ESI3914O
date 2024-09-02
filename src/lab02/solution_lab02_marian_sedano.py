@@ -26,14 +26,16 @@ def analyze_log(log_rdd):
     ip_count_rdd = ip_rdd.map(lambda ip: (ip, 1)) \
                          .reduceByKey(lambda a, b: a + b)
     
-    # Collect results
-    return ip_count_rdd.collect()
+    result_dict = dict(ip_count_rdd.collect())
+    
+    return result_dict
 
-
+# Run analysis
 result = analyze_log(log_rdd)
 
-for ip, count in result:
+# Print results
+for ip, count in result.items():
     print(f"{ip}: {count}")
 
 # Stop the SparkContext
-    sc.stop()
+sc.stop()
