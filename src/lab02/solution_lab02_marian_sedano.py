@@ -11,9 +11,6 @@ spark = SparkSession.builder \
 
 sc = spark.sparkContext
 
-# Log file upload to an RDD
-log_rdd = sc.textFile("./../../datasets/access.log")
-
 def analyze_log(log_rdd):
 
     # Regular expression pattern to match valid IPv4 addresses
