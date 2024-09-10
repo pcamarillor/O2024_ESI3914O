@@ -2,10 +2,11 @@ def read_csv_dataset(spark, path):
     '''
     Reads the data frame from the given path.
     '''
-    df = spark.read \
+    df = spark \
+        .read \
         .option("mode", "FAILFAST") \
         .option("inferSchema", "true") \
-        .option("header", True) \
+        .option("header", "true") \
         .csv(path)
 
     return df
@@ -41,4 +42,3 @@ def get_total_passengers_between_two_countries(flights_df, country_a, country_b)
     return flights_df.filter((flights_df["OriginCountry"] == country_a) & 
                              (flights_df["DestinationCountry"] == country_b)) \
                      .agg({"Passengers": "sum"})
-
