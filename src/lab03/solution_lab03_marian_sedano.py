@@ -1,42 +1,44 @@
-def load_csv_data(spark, file_path):
+def read_csv_dataset(spark, path):
     '''
-    Load a DataFrame from a CSV file located at the specified path.
+    Reads the data frame from the given path.
     '''
-    data_frame = spark.read \
+    df = spark.read \
         .option("mode", "FAILFAST") \
         .option("inferSchema", "true") \
-        .option("header", "true") \
-        .csv(file_path)
+        .option("header", True) \
+        .csv(path)
 
-    return data_frame
+    return df
 
-def calculate_total_passengers_by_airline(flights_df):
+def get_total_passengers(flights_df):
     '''
-    Compute the total passengers carried by each airline.
+    Analyze the total number of passengers each airline has transported.
     '''
     return flights_df.groupBy("Airline").agg({"Passengers": "sum"})
 
-def top_5_countries_with_most_departures(flights_df):
+def get_top_5_busiest_origin_countries(flights_df):
     '''
-    Retrieve the top 5 countries with the highest number of departing flights.
+    Find the top 5 countries with the most outbound flights (based on the number of flights originating from each country).
     '''
     return flights_df.groupBy("OriginCountry").count().sort("count", ascending=False).limit(5)
 
-def average_passengers_by_destination(flights_df):
+def get_avg_passengers_per_flight_per_destination_country(flights_df):
     '''
-    Determine the average number of passengers per flight to each destination country.
+    Calculate the average number of passengers per flight arriving in each destination country.
     '''
     return flights_df.groupBy("DestinationCountry").agg({"Passengers": "avg"})
 
-def filter_flights_by_date(flights_df, specific_date):
+def get_flights_specific_date(flights_df, date):
     '''
-    Get all flights on a specific date along with their details.
+    List all flights and their details on a specific date.
     '''
-    return flights_df.filter(flights_df["FlightDate"] == specific_date)
+    return flights_df.where(flights_df["FlightDate"] == date)
 
-def total_passengers_between_countries(flights_df, origin_country, destination_country):
+def get_total_passengers_between_two_countries(flights_df, country_a, country_b):
     '''
-    Calculate the total number of passengers traveling between two specified countries.
+    Find the total number of passengers flying between two specific countries.
     '''
-    return flights_df.filter((flights_df["OriginCountry"] == origin_country) & 
-                             (flights_df["DestinationCountry"] == destination_country)).groupBy().agg({"Passengers": "sum"})
+    return flights_df.filter((flights_df["OriginCountry"] == country_a) & 
+                             (flights_df["DestinationCountry"] == country_b)) \
+                     .agg({"Passengers": "sum"})
+
