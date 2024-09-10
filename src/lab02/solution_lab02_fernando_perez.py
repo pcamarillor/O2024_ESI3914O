@@ -29,5 +29,4 @@ def analyze_log(dataset_rdd):
 
 
 analyze_log(dataset_rdd)
-
 sc.stop()
