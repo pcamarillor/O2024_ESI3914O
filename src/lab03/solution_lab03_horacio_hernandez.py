@@ -8,7 +8,7 @@ def read_csv_dataset(spark, path):
         .option("path", path) \
         .load()
 
-
+    print(path)
     return df
 
 
