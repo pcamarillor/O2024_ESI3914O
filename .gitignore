@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 /venv/
-/examples/
+/examples/notebooks
 /.ipynb_checkpoints/
 /src/groupByPractice
 /datasets/international_flights
