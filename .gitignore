@@ -1,3 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+/venv/
+/examples/
+/.ipynb_checkpoints/
+/src/groupByPractice
+/datasets/international_flights

@@ -5,11 +5,9 @@ def read_csv_dataset(spark, path):
         .option("mode", "FAILFAST") \
         .option("inferSchema", "true") \
         .option("header", "true") \
-        .option("path", "/home/horacio/school/8thSemester/bigData/CodeLab00/O2024_ESI3914O/datasets/international-flights-sql-excercise_5M.csv") \
+        .option("path", path) \
         .load()
 
-    if(path == "/home/horacio/school/8thSemester/bigData/CodeLab00/O2024_ESI3914O/datasets/international-flights-sql-excercise_5M.csv"):
-        print(f'File found...')
 
     return df
 
