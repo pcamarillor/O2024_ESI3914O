@@ -8,7 +8,7 @@ def read_csv_dataset(spark, path):
     full_path = os.path.join(path, 'international-flights-sql-excercise_5M.csv')
     
     try:
-        flights_df = spark.read.csv(full_path, header=True, inferSchema=True)
+        flights_df = spark.read.csv(path, header=True, inferSchema=True)
         flights_df = flights_df.withColumn("Passengers", F.col("Passengers").cast("int"))  
         print(f"DataFrame loaded with {flights_df.count()} records.")
         flights_df.printSchema()  
