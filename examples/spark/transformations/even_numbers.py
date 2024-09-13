@@ -1,8 +1,8 @@
 from pyspark.sql import SparkSession
 
-# Create Spark Session in localhost
-spark = SparkSession.builder.master("local") \
-    .appName("Transformations example: Even Numbers") \
+spark = SparkSession.builder \
+    .master("local") \
+    .config("spark.driver.bindAddress", "127.0.0.1") \
     .getOrCreate()
 
 # Create Spark Context
