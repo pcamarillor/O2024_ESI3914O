@@ -1,16 +1,14 @@
 def analyze_log(log_rdd):
-    # Extraer las direcciones IP de cada línea del log
-    def extract_ip(line):
-        return line.split(' ')[0]
+    # Filtra las líneas que tienen al menos una IP válida y evita líneas vacías
+    filtered_rdd = log_rdd.filter(lambda line: len(line.split()) > 0 and line.split()[0].count('.') == 3)
 
-    # Paso 1: Extraer las IPs
-    ips_rdd = log_rdd.map(extract_ip)
+    # Mapa de extracción para cada IP. Se asume que la IP está en la primera posición de la línea
+    ip_rdd = filtered_rdd.map(lambda line: (line.split()[0], 1))
 
-    # Paso 2: Contar el número de solicitudes por cada IP
-    ip_counts_rdd = ips_rdd.map(lambda ip: (ip, 1)).reduceByKey(lambda a, b: a + b)
+    # Agrupa por IP y cuenta las ocurrencias
+    ip_count_rdd = ip_rdd.reduceByKey(lambda a, b: a + b)
 
-    # Paso 3: Convertir el resultado a un diccionario
-    ip_counts = dict(ip_counts_rdd.collect())
+    # Convierte el RDD a diccionario
+    ip_count = ip_count_rdd.collectAsMap()
 
-    # Retornar el resultado como un diccionario
-    return ip_counts
+    return ip_count
