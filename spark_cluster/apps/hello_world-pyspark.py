@@ -1,24 +1,22 @@
 from pyspark.sql import SparkSession
 
+# Iniciar la sesión de Spark
 spark = SparkSession.builder \
     .appName("ITESO-BigData-Hello-World-App") \
     .getOrCreate()
 
 sc = spark.sparkContext
 sc.setLogLevel("ERROR")
-# Verify the SparkSession is connected to the correct master
+
+# Verificar que la sesión Spark está conectada al master correcto
 print("Spark Master URL:", sc.master)
 print("Hello World App - ITESO - Big Data - 2024")
-# Step 1: Create an RDD with a list of words
-words = ["apple", "banana", "apple", "orange", "banana", "apple", "orange", "orange"]
-words_rdd = sc.parallelize(words)
 
-# Step 2: Use countByValue to count the occurrences of each word
-word_counts = words_rdd.countByValue()
+# Mostrar los nombres de los miembros del equipo
+team_members = ["Dion Rizo", "Fernando Franco", "Daniel Rios"]
+print("Team Members:")
+for member in team_members:
+    print(f"- {member}")
 
-# Step 3: Print the results
-for word, count in word_counts.items():
-    print(f"{word}: {count}")
-
-# Stop the SparkSession when done
+# Detener la sesión de Spark
 spark.stop()
