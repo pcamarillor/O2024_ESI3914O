@@ -4,6 +4,11 @@ from pyspark.sql.functions import col, avg
 # Initialize Spark session
 spark = SparkSession.builder.appName("MemoryUnoptimized").getOrCreate()
 
+'''spark = SparkSession.builder \
+    .appName("MemoryOptimized") \
+    .config("spark.driver.bindAddress", "127.0.0.1") \
+    .getOrCreate()'''
+
 # Sample data: Large collection (this could represent a much larger dataset)
 data = [("John", 28, 50000), 
         ("Jane", 35, 80000), 
