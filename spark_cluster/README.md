@@ -117,7 +117,7 @@ spark-submit \
 /spark/bin/spark-submit \
 --master spark://<container_id>:7077 \
 --deploy-mode client \
-/opt/spark-apps/solution.py
+/opt/spark-apps/hello_world-pyspark.py
 ```
 
 After running this you will see an output pretty much like this:
