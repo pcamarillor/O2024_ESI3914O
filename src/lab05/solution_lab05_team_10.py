@@ -35,7 +35,7 @@ def right_join_cars_rentals(rentals_df, cars_df) -> DataFrame:
     """
     Task 4: Perform a right join between Cars and Rentals.
     """
-    right_join_df = rentals_df.join(cars_df, on="car_id", how="right")
+    right_join_df = cars_df.join(rentals_df, on="car_id", how="right")
     return right_join_df
 
 
