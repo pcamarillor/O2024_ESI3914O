@@ -17,5 +17,11 @@ df_flights = spark.read \
 
 df_flights.printSchema()
 
+df_flights.write.partitionBy("OriginCountry", "DestinationCountry").parquet("/opt/spark-data/output/")
+
+print("done")
+
+
+
 
 
