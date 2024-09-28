@@ -9,4 +9,4 @@ def clean_df(netflix_df) -> DataFrame:
     return cleaned_df
 
 def write_df(netflix_df) -> None :
-    netflix_df.write.mode('overwrite').csv('output/netflix_cleaned.csv', header=True)
+    netflix_df.write.mode('overwrite').partitionBy('release_year', 'type').parquet('/opt/spark-data/output/netflix_cleaned')
