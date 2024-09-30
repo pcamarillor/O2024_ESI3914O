@@ -16,6 +16,10 @@ df_flights = spark.read \
 
 # PostgreSQL container configuration
 jdbc_url = "jdbc:postgresql://postgres-iteso:5432/postgres"
+
+
+import time
+time.sleep(180)
 df_flights.write \
     .format("jdbc") \
     .option("url", jdbc_url) \
