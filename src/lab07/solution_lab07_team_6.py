@@ -21,8 +21,8 @@ def clean_df(netflix_df) -> DataFrame:
     return netflix_df
 
 def write_df(netflix_df) -> None :
-    df_parquet = spark.read \
-    .format("parquet") \
-    .load(netflix_df) 
-    
+    df_parquet = spark.write \
+    .partitionBy("release_year", "type") \
+    .mode("overwrite") \
+    .parquet("/opt/spark-data/output/netflix_parqued_partitioned")
     return df_parquet
