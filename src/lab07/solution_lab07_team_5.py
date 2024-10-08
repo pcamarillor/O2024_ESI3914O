@@ -12,7 +12,7 @@ def clean_df(netflix_df) -> DataFrame:
 
     netflix_df.printSchema()
 
-    return netflix_df.dropna()
+    return netflix_df.dropna(how='any')
 
 def write_df(netflix_df) -> None :
     netflix_df.write \
@@ -23,7 +23,7 @@ def write_df(netflix_df) -> None :
 if __name__ == "__main__":
     spark = SparkSession.builder \
         .appName("Lab 07 - Persisting Netflix data") \
-        .config("spark.driver.bindAddress", "localhost") \
+        .config("spark.ui.port","4040") \
         .getOrCreate()
 
     netflix_df = spark.read \
@@ -33,4 +33,3 @@ if __name__ == "__main__":
 
     netflix_df = clean_df(netflix_df)
     write_df(netflix_df)
-    netflix_df.show()
