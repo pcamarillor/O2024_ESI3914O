@@ -1,29 +1,26 @@
-from pyspark.sql import SparkSession
+TABLE_EMPLOYEE = "Employees"
 
-# Inicializa SparkSession con el package de MariaDB
-spark = SparkSession.builder \
-            .appName("Solution-Storage-Examples-MariaDB") \
-            .config("spark.ui.port", "4040") \
-            .config("spark.jars.packages", "org.mariadb.jdbc:mariadb-java-client:3.1.2") \
-            .getOrCreate()
+def write_to_mysql(_df):
+    """
+    This method is to write data back to mysql
+    """
+    _df.write \
+        .format("jdbc") \
+        .option("driver", MYSQL_JDBC_DRIVER) \
+        .option("url", URL) \
+        .option("dbtable", TABLE_EMPLOYEE) \
+        .option("user", MYSQL_USERNAME) \
+        .option("password", MYSQL_PASSWORD) \
+        .save()
 
-spark.sparkContext.setLogLevel("ERROR")
-
-# Leer el dataset de vuelos internacionales (5M)
-df_flights = spark.read \
-            .option("inferSchema", "true") \
-            .option("header", "true") \
-            .csv("/opt/spark-data/international-flights-sql-excercise_5M.csv.gz")
-
-# Configuración del contenedor MariaDB
-jdbc_url = "jdbc:mariadb://mariadb-iteso:3306/flightsdb"
-df_flights.write \
-    .format("jdbc") \
-    .option("url", jdbc_url) \
-    .option("dbtable", "flights") \
-    .option("user", "root") \
-    .option("password", "Adm1n@1234") \
-    .option("driver", "org.mariadb.jdbc.Driver") \
-    .save()
-
-print("done")
+def read_from_mysql(_spark):
+    """
+    This method is going to read data from mysql database
+    """
+    return _spark.read.format("jdbc") \
+        .option("driver", MYSQL_JDBC_DRIVER) \
+        .option("url", URL) \
+        .option("dbtable", TABLE_EMPLOYEE) \
+        .option("user", MYSQL_USERNAME) \
+        .option("password", MYSQL_PASSWORD) \
+        .load()
