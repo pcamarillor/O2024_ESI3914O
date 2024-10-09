@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 import time
 
+
 # Initialize SparkSession
 spark = SparkSession.builder \
             .appName("Structured-Streaming-Rate-Example") \
