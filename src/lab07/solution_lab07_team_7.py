@@ -7,5 +7,5 @@ def clean_df(netflix_df) -> DataFrame:
     return netflix_df.dropna()
 
 def write_df(netflix_df) -> None:
-    netflix_df.write.mode("overwrite").partitionBy("release_year", "type").parquet("/path/to/output/directory")
+    netflix_df.write.mode("overwrite").partitionBy("release_year", "type").parquet("/output")
     return None
