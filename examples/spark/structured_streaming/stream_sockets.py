@@ -5,9 +5,11 @@ from pyspark.sql.functions import explode, split
 spark = SparkSession.builder \
             .appName("Structured-Streaming-Sockets-Example") \
             .config("spark.ui.port","4040") \
+            .config("spark.driver.bindAddress", "localhost") \
             .getOrCreate()
 
 spark.sparkContext.setLogLevel("ERROR")
+spark.conf.set("spark.sql.shuffle.partitions", "5")
 
 # Open the connection to the running socket
 lines = spark.readStream \
@@ -21,6 +23,7 @@ wordCounts = words.groupBy("word").count()
 
 query = wordCounts \
     .writeStream \
+    .trigger(processingTime='20 seconds') \
     .outputMode("complete") \
     .format("console") \
     .start()
