@@ -24,9 +24,9 @@ def consume_kafka_events(kafka_server):
     kafka_df.printSchema()
 
     # Transform binary data to string
-    df_input = kafka_df.selectExpr("CAST(value AS STRING)")
+    #df_input = kafka_df.selectExpr("CAST(value AS STRING)")
 
-    query = df_input \
+    query = kafka_df \
         .writeStream \
         .trigger(processingTime='3 seconds') \
         .outputMode("append") \
