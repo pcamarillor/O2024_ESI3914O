@@ -1,5 +1,6 @@
 import argparse
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import window, explode, split
 
 def consume_kafka_events(kafka_server):
     # Initialize SparkSession
@@ -24,15 +25,29 @@ def consume_kafka_events(kafka_server):
     kafka_df.printSchema()
 
     # Transform binary data to string
-    #df_input = kafka_df.selectExpr("CAST(value AS STRING)")
+    df_input = kafka_df.selectExpr("CAST(value AS STRING)", "timestamp")
 
-    query = kafka_df \
+    words = df_input.select(explode(split(df_input.value, " ")).alias("word"), "timestamp")
+    words.printSchema()
+
+    # The watermark allows late data to update the state within 2 minutes.
+    # Late data beyond the 2-minute threshold will be dropped.
+    windowed_counts = words \
+            .withWatermark("timestamp", "2 minutes") \
+            .groupBy(window(words.timestamp,
+                            "30 seconds", # Window duration 
+                            "5 seconds"), # Slide duration 
+                    words.word) \
+            .count()
+    
+    # Perform a word count within fixed-time windows
+    query = windowed_counts \
         .writeStream \
-        .trigger(processingTime='3 seconds') \
-        .outputMode("append") \
+        .outputMode("update") \
         .format("console") \
+        .option("truncate", "false") \
         .start() \
-        .awaitTermination(80)
+        .awaitTermination(90)
 
     print("stream closed")
 
