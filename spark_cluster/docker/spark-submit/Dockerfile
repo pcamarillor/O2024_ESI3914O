@@ -11,4 +11,4 @@ ENV SPARK_APPLICATION_ARGS ""
 #ENV SPARK_APPLICATION_MAIN_CLASS my.main.Application
 
 
-CMD ["/bin/bash", "/spark-submit.sh"]
+CMD ["/bin/bash"]
