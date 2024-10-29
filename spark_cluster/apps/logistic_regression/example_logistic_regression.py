@@ -32,15 +32,33 @@ schema = StructType([
 # Convert list to a DataFrame
 df = spark.createDataFrame(data, schema=schema)
 
-# Transform features into a single "features" column as a Dense Vector
+# Assemble the features into a single vector column
 assembler = VectorAssembler(inputCols=["feature1", "feature2"], outputCol="features")
 data_with_features = assembler.transform(df).select("label", "features")
 
-# Initialize logistic regression model
+# Split the data into training and test sets 80% training data and 20% testing data
+train, test = data_with_features.randomSplit([0.8, 0.2], seed=57)
+
+# Show the whole dataset
+print("Dataset")
+data_with_features.show()
+
+# Print train dataset
+print("train set")
+train.show()
+
+# Create a logistic regression model
 lr = LogisticRegression(maxIter=10, regParam=0.01)
 
-# Fit the model
-lr_model = lr.fit(data_with_features)
+# ============================
+# TRAIN
+# ============================
+
+# Train to get the model
+lr_model = lr.fit(train)
+
+# Print coefficients
+print("Coefficients: " + str(lr_model.coefficients))
 
 # Display model summary
 training_summary = lr_model.summary
@@ -49,28 +67,8 @@ training_summary = lr_model.summary
 # PREDICTIONS
 # ============================
 
-# Create new data for predictions
-new_data = [
-    (2.5, 3.5),
-    (1.5, 2.0),
-    (3.0, 4.5),
-    (0.0, 1.0)
-]
-
-# Define schema for prediction DataFrame (no label column required here)
-new_schema = StructType([
-    StructField("feature1", FloatType(), True),
-    StructField("feature2", FloatType(), True)
-])
-
-# Convert list to a DataFrame
-predictions_df = spark.createDataFrame(new_data, schema=new_schema)
-
-# Transform new features into a single "features" column
-new_data_with_features = assembler.transform(predictions_df).select("features")
-
-# Use the trained model to make predictions on the new data
-predictions = lr_model.transform(new_data_with_features)
+# Use the trained model to make predictions on the test data
+predictions = lr_model.transform(test)
 
 # Show predictions
 predictions.select("features", "prediction", "probability").show()
