@@ -13,8 +13,9 @@ spark.conf.set("spark.sql.shuffle.partitions", "5")
 
 # Generate random vertices
 size = 13
-vertices_data = [(str(i), "Node " + str(i)) for i in range(size)]
+vertices_data = [(str(i), "User " + str(i)) for i in range(size)]
 vertices = spark.createDataFrame(vertices_data, ["id", "name"])
+vertices.show(n=size)
 
 # Generate random connections
 connections = []
@@ -27,7 +28,7 @@ for i in range(len(vertices_data)):
 
 edges = spark.createDataFrame(connections, ["src", "dst", "relationship"])
 print("Edges as DataFrame:")
-edges.show()
+edges.show(n=20)
 
 # Create a GraphFrame
 graph = GraphFrame(vertices, edges)
