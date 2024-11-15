@@ -13,20 +13,25 @@ spark.conf.set("spark.sql.shuffle.partitions", "5")
 
 # Generate random vertices
 size = 13
-vertices_data = [(str(i), "User " + str(i)) for i in range(size)]
-vertices = spark.createDataFrame(vertices_data, ["id", "name"])
+vertices = spark.read.text("/opt/spark-data/sample_movielens_ratings.txt")
+
+vertices = vertices.withColumn("userID", split(vertices["value"], "::").getItem(0)) \
+.withColumn("movieID", split(vertices["value"], "::").getItem(1)) \
+.withColumn("rating", split(vertices["value"], "::").getItem(2)) \
+.withColumn("timestamp", split(vertices["value"], "::").getItem(3))
+
+vertices = vertices.drop("value")
+vertices = vertices.drop("timestamp")
+vertices = vertices.drop("rating")
+
+vertices = vertices.withColumn("userID", vertices["userID"].cast("int"))
+vertices = vertices.withColumn("movieID", vertices["movieID"].cast("int"))
 vertices.show(n=size)
 
-# Generate random connections
-connections = []
-for i in range(len(vertices_data)):
-    num_connections = random.randint(1, min(5, len(vertices_data) - 1))  # Ensure at least one connection
-    for _ in range(num_connections):
-        target_node = random.choice([n for n in vertices_data if n != vertices_data[i]])
-        connection_type = random.choice(["friend", "married", "knows", "partner"])
-        connections.append((vertices_data[i][0], target_node[0], connection_type))
+edges = vertices.select(vertices["userID"].alias("src"), vertices["movieID"].alias("dst"))
+edges = edges.withColumn("src", edges["src"].cast("int"))
+edges = edges.withColumn("dst", edges["src"].cast("int"))
 
-edges = spark.createDataFrame(connections, ["src", "dst", "relationship"])
 print("Edges as DataFrame:")
 edges.show(n=20)
 
