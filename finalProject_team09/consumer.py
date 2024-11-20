@@ -4,7 +4,7 @@ from pyspark.sql.types import StructType, StringType, IntegerType, FloatType
 
 spark = SparkSession.builder.appName("KafkaSparkStreaming").getOrCreate()
 
-# Definir el esquema de datos
+# Define data schema
 schema_clicks = StructType() \
     .add("event_type", StringType()) \
     .add("timestamp", StringType()) \
@@ -19,7 +19,7 @@ schema_views = StructType() \
     .add("page_id", StringType()) \
     .add("view_duration", FloatType())
 
-# Leer desde Kafka
+# Read from Kafka
 df_clicks = spark \
     .readStream \
     .format("kafka") \
@@ -38,7 +38,7 @@ df_views = spark \
     .load() \
     .select(from_json(col("value").cast("string"), schema_views).alias("data")).select("data.*")
 
-# Guardar en formato Parquet
+# Save in Parquet format
 query_clicks = df_clicks.writeStream \
     .format("parquet") \
     .option("path", "/tmp/parquet_data_clicks") \
