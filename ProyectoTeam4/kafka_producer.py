@@ -22,7 +22,6 @@ locations = [fake.city() + ", " + fake.country() for _ in range(10)]
 # Function to generate sensor data
 def generate_video_stream_data():
     return {
-        "user_id": fake.uuid4(),
         "video_id": fake.uuid4(),
         "video_title": fake.sentence(nb_words=3),
         'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
