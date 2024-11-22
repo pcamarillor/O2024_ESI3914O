@@ -27,6 +27,7 @@ if __name__ == "__main__":
     KAFKA_SERVER = '{0}:9093'.format(args.kafka_bootstrap)
     KAFKA_TOPIC = args.kafka_topic
 
+
     # Initialize the Kafka producer
     producer = KafkaProducer(
         bootstrap_servers=KAFKA_SERVER,
