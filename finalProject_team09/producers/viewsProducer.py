@@ -11,6 +11,7 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
+
 def generate_view_event():
     return {
         'event_type': 'view',
@@ -20,8 +21,16 @@ def generate_view_event():
         'view_duration': random.uniform(0.5, 10.0)
     }
 
-while True:
-    event = generate_view_event()
-    producer.send('topic_page_views', value=event)
-    print(f"Sent: {event}")
-    time.sleep(1)
+
+with open('view_events_log.txt', 'a') as log_file:
+    while True:
+        event = generate_view_event()
+        producer.send('topic_page_views', value=event)
+
+        # Write the event in .txt file
+        log_file.write(f"{json.dumps(event)}\n")
+
+        log_file.flush()
+
+        print(f"Sent and logged: {event}")
+        time.sleep(1)

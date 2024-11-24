@@ -11,6 +11,7 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
+
 def generate_click_event():
     return {
         'event_type': 'click',
@@ -20,8 +21,15 @@ def generate_click_event():
         'click_count': random.randint(1, 10)
     }
 
-while True:
-    event = generate_click_event()
-    producer.send('topic_user_clicks', value=event)
-    print(f"Sent: {event}")
-    time.sleep(1)
+
+with open('click_events_log.txt', 'a') as log_file:
+    while True:
+        event = generate_click_event()
+        producer.send('topic_user_clicks', value=event)
+
+        log_file.write(f"{json.dumps(event)}\n")
+
+        log_file.flush()
+
+        print(f"Sent and logged: {event}")
+        time.sleep(1)
