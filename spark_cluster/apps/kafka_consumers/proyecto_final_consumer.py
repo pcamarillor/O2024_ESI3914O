@@ -1,7 +1,24 @@
+from pyspark.sql.streaming import StreamingQueryListener
 import argparse
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StringType, IntegerType, TimestampType, BooleanType, StructField
+
+class CustomStreamingQueryListener(StreamingQueryListener):
+    def onQueryStarted(self, event):
+        print(f"Query started: {event.id}, {event.name}")
+
+    def onQueryProgress(self, event):
+        # Processed rows per second
+        rows_per_second = event.progress.processedRowsPerSecond
+        if rows_per_second:
+            print(f"Batch ID: {event.progress.batchId}, NumInputRows:{event.progress.numInputRows}")
+            print(f"Processed Rows Per Second: {rows_per_second}")
+        else:
+            print("No processedRowsPerSecond information available")
+
+    def onQueryTerminated(self, event):
+        print(f"Query terminated: {event.id}")
 
 def consume_kafka_events(kafka_server):
     # Initialize SparkSession
@@ -10,8 +27,12 @@ def consume_kafka_events(kafka_server):
                 .config("spark.ui.port", "4040") \
                 .getOrCreate()
 
-    spark.sparkContext.setLogLevel("DEBUG")
+    spark.sparkContext.setLogLevel("ERROR")
     spark.conf.set("spark.sql.shuffle.partitions", "5")
+
+    # Register custom query listener
+    listener = CustomStreamingQueryListener()
+    spark.streams.addListener(listener)
 
     # Define the schema of the incoming JSON data
     traffic_schema = StructType([
@@ -40,6 +61,7 @@ def consume_kafka_events(kafka_server):
         .option("kafka.bootstrap.servers", kafka_bootstrap_server) \
         .option("subscribe", "network-traffic,network-traffic-2,network-traffic-3") \
         .option("startingOffsets", "latest") \
+        .option("maxOffsetsPerTrigger", 5000) \
         .load()
 
     # Transform binary data to string
