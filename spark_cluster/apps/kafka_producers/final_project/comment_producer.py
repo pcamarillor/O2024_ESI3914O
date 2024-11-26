@@ -7,13 +7,73 @@ import random
 import argparse
 import string
 
+common_words = [
+    "the",
+    "be",
+    "to",
+    "of",
+    "and",
+    "a",
+    "in",
+    "that",
+    "have",
+    "I",
+    "it",
+    "for",
+    "not",
+    "on",
+    "with",
+    "as",
+    "you",
+    "do",
+    "at",
+    "this",
+    "but",
+    "his",
+    "by",
+    "from",
+    "they",
+    "we",
+    "say",
+    "her",
+    "she",
+    "or",
+    "an",
+    "will",
+    "my",
+    "one",
+    "all",
+    "would",
+    "there",
+    "their",
+    "what",
+    "so",
+    "up",
+    "out",
+    "if",
+    "about",
+    "who",
+    "get",
+    "which",
+    "go",
+    "me",
+    "president",
+]
+
 
 def generate_random_words():
-    words = [
-        "".join(random.choices(string.ascii_lowercase, k=random.randint(3, 10)))
-        for _ in range(random.randint(5, 15))
-    ]
-    return " ".join(words)
+    words_count = random.randint(5, 20)
+    words = random.choices(common_words, k=words_count)
+
+    # Capitalize the first word
+    words[0] = words[0].capitalize()
+
+    # Randomly add punctuation
+    if random.random() < 0.2:  # 20% chance to add a period
+        words[-1] += "."
+
+    tweet = " ".join(words)
+    return tweet[:255]
 
 
 if __name__ == "__main__":
@@ -37,15 +97,15 @@ if __name__ == "__main__":
         while True:
             message_data = {
                 "event_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "user_id": random.randint(1, 100),
-                "post_id": random.randint(1, 500),
+                "user_id": random.randint(1, 10),
+                "post_id": random.randint(1, 10),
                 "text": generate_random_words(),
             }
 
             producer.send(TOPIC, message_data)
             print(f"Sent to {TOPIC}: {message_data}")
 
-            time.sleep(2)
+            time.sleep(0.5)
 
     except KeyboardInterrupt:
         print("Stopped producing messages.")

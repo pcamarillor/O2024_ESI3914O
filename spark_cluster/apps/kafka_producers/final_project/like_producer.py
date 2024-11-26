@@ -27,14 +27,14 @@ if __name__ == "__main__":
         while True:
             message_data = {
                 "event_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "user_id": random.randint(1, 100),
-                "post_id": random.randint(1, 500),
+                "user_id": random.randint(1, 10),
+                "post_id": random.randint(1, 10),
             }
 
             producer.send(TOPIC, message_data)
             print(f"Sent to {TOPIC}: {message_data}")
 
-            time.sleep(2)
+            time.sleep(0.5)
 
     except KeyboardInterrupt:
         print("Stopped producing messages.")
