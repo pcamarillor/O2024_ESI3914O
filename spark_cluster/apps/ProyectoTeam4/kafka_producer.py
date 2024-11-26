@@ -4,11 +4,10 @@ import json
 import time
 from datetime import datetime
 import random
-
-
 import pandas as pd
 import random
 from faker import Faker
+import sys
 
 # Initialize Faker
 fake = Faker()
@@ -53,15 +52,27 @@ if __name__ == "__main__":
         value_serializer=lambda v: json.dumps(v).encode('utf-8')  # serialize data as JSON
     )
 
+    cumulative_size = 0
+    message_count = 0
+
     # Produce data to Kafka topic
     try:
         print(f"Producing messages to Kafka topic: {KAFKA_TOPIC}")
         while True:
             # Generate random sensor data
-            sensor_data = generate_video_stream_data()
+            video_data = generate_video_stream_data()
+
+             # Calculate size of data
+            data_size = sys.getsizeof(json.dumps(video_data).encode('utf-8'))
+            cumulative_size += data_size
+            message_count += 1
+
+            # Log size and rate
+            print(f"Message {message_count}: Size = {data_size} bytes, Cumulative Size = {cumulative_size / (1024 * 1024):.2f} MB\n")
+
             # Send data to Kafka
-            producer.send(KAFKA_TOPIC, sensor_data)
-            print(f"Sent: {sensor_data}")
+            producer.send(KAFKA_TOPIC, video_data)
+            print(f"Sent: {video_data}")
             
             # Sleep for a few seconds before sending the next message
             time.sleep(2)

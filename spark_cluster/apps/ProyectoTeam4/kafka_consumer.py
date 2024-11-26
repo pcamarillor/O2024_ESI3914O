@@ -2,6 +2,19 @@ import argparse
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import window, explode, split, from_json, col, count, sum, avg
 from pyspark.sql.types import StructType, StringType, TimestampType, DoubleType, StructField, IntegerType
+from pyspark.sql.streaming import StreamingQueryListener
+
+class QueryProgressListener(StreamingQueryListener):
+    def onQueryStarted(self, event):
+        pass
+    
+    def onQueryProgress(self, event):
+        progress = event.progress
+        print(f"Rows processed per second: {progress.processedRowsPerSecond}")
+        print(f"Number of input rows: {progress.numInputRows}")
+    
+    def onQueryTerminated(self, event):
+        pass
 
 def consume_kafka_events(kafka_server):
     # Initialize SparkSession
@@ -25,6 +38,8 @@ def consume_kafka_events(kafka_server):
                                 StructField("viewer_location", StringType(), True)
     ])
 
+    spark.streams.addListener(QueryProgressListener())
+
     # Create DataFrame representing the stream of input studens from file
     kafka_bootstrap_server = "{0}:9093".format(kafka_server)
     print("Establishing connection with {0}".format(kafka_bootstrap_server))
@@ -32,10 +47,9 @@ def consume_kafka_events(kafka_server):
         .readStream\
         .format("kafka") \
         .option("kafka.bootstrap.servers", kafka_bootstrap_server) \
-        .option("subscribe", "pyspark-prj-example") \
-        .option("startingOffsets", 
-                # latest, earliest, default: latest
-                "latest") \
+        .option("subscribe", "IsaacProducer,MiguelProducer,MarceloProducer") \
+        .option("startingOffsets", "latest") \
+        .option("failOnDataLoss", "false") \
         .load()
 
     kafka_df.printSchema()
