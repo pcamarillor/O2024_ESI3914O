@@ -5,6 +5,6 @@
 docker exec -it spark_submit_container /spark/bin/spark-submit \
 --master spark://$1:7077 \
 --deploy-mode client \
---packages graphframes:graphframes:0.8.3-spark3.5-s_2.13 \
-/opt/spark-apps/$2
+--packages org.apache.spark:spark-sql-kafka-0-10_2.13:3.5.2,com.datastax.spark:spark-cassandra-connector_2.13:3.5.1 \
+/opt/spark-apps/$2 --kafka-bootstrap $3
 
