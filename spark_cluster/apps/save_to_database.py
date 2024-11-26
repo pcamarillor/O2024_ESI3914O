@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StringType, TimestampType, DoubleType, StructField, IntegerType
 
-# Initialize SparkSession
+## Initialize SparkSession
 spark = SparkSession.builder \
             .appName("Solution-GPS-Storage-MongoDB") \
             .config("spark.ui.port","4040") \

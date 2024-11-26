@@ -6,7 +6,7 @@ import argparse
 from kafka import KafkaProducer
 
 
-# Función para generar coordenadas GPS aleatorias
+## Función para generar coordenadas GPS aleatorias
 def generate_random_location():
     
     lat_min = 14.5  # Latitud mínima de México
