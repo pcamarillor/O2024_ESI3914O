@@ -1,0 +1,90 @@
+version: "3.9"
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - traffic_monitor_network
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - traffic_monitor_network
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "raw_traffic_logs:1:1,processed_traffic_logs:1:1,traffic_alerts:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    networks:
+      - traffic_monitor_network
+    environment:
+      - CASSANDRA_CLUSTER_NAME=NetworkTrafficCluster
+
+  spark-master:
+    image: spark-master:latest
+    container_name: spark-master
+    ports:
+      - "4040:4040"
+      - "9090:8080"
+      - "7077:7077"
+    volumes:
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
+    environment:
+      - SPARK_LOCAL_IP=spark-master
+    networks:
+      - traffic_monitor_network
+
+  spark-worker:
+    image: spark-worker:latest
+    depends_on:
+      - spark-master
+    container_name: spark-worker
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=128m
+      - SPARK_EXECUTOR_MEMORY=256m
+    volumes:
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
+    networks:
+      - traffic_monitor_network
+
+networks:
+  traffic_monitor_network:
+    name: traffic-monitor-network
+
+
+# kafka:
+# image: wurstmeister/kafka:latest
+# ports:
+# - "9092:9092"
+# expose:
+# - "9093"
+# networks:
+# - spark_cluster_default
+# environment:
+# KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+# KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+# KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+# KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+# KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+# KAFKA_CREATE_TOPICS: "my-topic:1:1"
+# volumes:
+# - /var/run/docker.sock:/var/run/docker.sock
