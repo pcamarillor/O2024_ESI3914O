@@ -44,7 +44,7 @@ def consume_kafka_events(kafka_server="e30cf11ddcb6"):
     comment_schema = StructType(
         [
             StructField("post_id", IntegerType(), True),
-            StructField("comment_text", StringType(), True),
+            StructField("text", StringType(), True),
             StructField("event_time", StringType(), True),
             StructField("user_id", IntegerType(), True),
         ]
