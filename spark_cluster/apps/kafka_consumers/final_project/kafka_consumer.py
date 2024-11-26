@@ -2,6 +2,23 @@ import argparse
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StringType, StructField, IntegerType
+from pyspark.sql.streaming import StreamingQueryListener
+
+
+class PerformanceListener(StreamingQueryListener):
+    def onQueryStarted(self, event):
+        print(f"Query started: {event.id}")
+
+    def onQueryProgress(self, event):
+        print(
+            f"Batch ID: {event.progress.batchId}, NumInputRows:{event.progress.numInputRows}, Processed Rows Per second: {event.progress.processedRowsPerSecond}"
+        )
+
+    def onQueryTerminated(self, event):
+        print(f"Query terminated: {event.id}")
+
+
+# Add listener
 
 
 def consume_kafka_events(kafka_server="e30cf11ddcb6"):
@@ -12,6 +29,7 @@ def consume_kafka_events(kafka_server="e30cf11ddcb6"):
         .getOrCreate()
     )
 
+    spark.streams.addListener(PerformanceListener())
     spark.sparkContext.setLogLevel("ERROR")
     spark.conf.set("spark.sql.shuffle.partitions", "5")
 
