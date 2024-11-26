@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, window, avg, min, max
 from pyspark.sql.types import StructField, StructType, StringType, TimestampType, DoubleType
 
-def consume_kafka_events(kafka_server, topics, data_lake_path, checkpoint_path):
+def consume_kafka_events(kafka_server, topics):
     """
     Function to consume Kafka events from specified topics using PySpark Structured Streaming
     and store the processed data into a data lake with console logging.
@@ -69,13 +69,13 @@ def consume_kafka_events(kafka_server, topics, data_lake_path, checkpoint_path):
     query = windowed_aggregates.writeStream \
         .outputMode("append") \
         .format("parquet") \
-        .option("path", data_lake_path) \
-        .option("checkpointLocation", checkpoint_path) \
+        .option("path", "/otp/spark-data/parquet/exchange_rates") \
+        .option("checkpointLocation", "/otp/spark-data/parquet/checkpoint") \
         .trigger(processingTime="1 minute") \
         .start()
 
-    print(f"Saving data to Data Lake at {data_lake_path}")
-    print(f"Checkpointing at {checkpoint_path}")
+    print("Saving data to Data Lake at /otp/spark-data/parquet/exchange_rates")
+    print("Checkpointing at /otp/spark-data/parquet/checkpoint")
 
     # Await termination of the streaming query
     query.awaitTermination()
@@ -84,8 +84,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="PySpark Kafka Consumer")
     parser.add_argument('--kafka-bootstrap', required=True, help="Kafka bootstrap server")
     parser.add_argument('--kafka-topics', required=True, help="Comma-separated Kafka topics to subscribe to")
-    parser.add_argument('--data-lake-path', required=True, help="Path to store the processed data in the data lake")
-    parser.add_argument('--checkpoint-path', required=True, help="Path for checkpointing the stream processing")
     args = parser.parse_args()
 
-    consume_kafka_events(args.kafka_bootstrap, args.kafka_topics, args.data_lake_path, args.checkpoint_path)
+    consume_kafka_events(args.kafka_bootstrap, args.kafka_topics)

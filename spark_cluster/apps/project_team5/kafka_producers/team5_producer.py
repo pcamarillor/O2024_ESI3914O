@@ -28,7 +28,7 @@ def run_producer(kafka_server, topic, base_rate):
             }
             producer.send(topic, message)
             print(f"Sent: {message}")
-            time.sleep(2)  # Simulate delay
+            time.sleep(4)
 
     except KeyboardInterrupt:
         print("Stopped producing messages.")
