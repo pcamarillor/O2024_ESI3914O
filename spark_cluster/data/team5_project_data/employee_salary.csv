@@ -1,0 +1,26 @@
+employeeID,name,sex,currency_region,usd_salary,hire_date,employee_level
+1,John Doe,m,CLP,2974,2022-04-29,1
+2,Jane Smith,m,BRL,3638,2021-07-04,2
+3,Bob Johnson,f,CLP,4255,2024-05-03,3
+4,Emily Davis,f,CLP,3959,2024-09-24,5
+5,Michael Brown,f,MXN,4654,2022-08-30,4
+6,Sarah Wilson,f,BRL,1573,2017-04-30,4
+7,James Taylor,f,MXN,4189,2019-10-02,3
+8,Patricia Miller,f,MXN,2876,2017-08-28,4
+9,David Anderson,m,MXN,2284,2017-06-11,4
+10,Lisa Thomas,f,CLP,4718,2015-07-24,5
+11,Mark White,f,CLP,3234,2023-09-19,4
+12,Jessica Harris,f,CLP,2278,2021-08-07,3
+13,Daniel Martin,m,BRL,2420,2017-12-09,4
+14,Susan Clark,f,BRL,4575,2020-01-03,3
+15,Chris Lewis,m,MXN,4950,2018-05-16,5
+16,Nancy Walker,m,MXN,2393,2017-09-30,1
+17,Thomas Lee,m,MXN,1872,2015-09-13,1
+18,Karen Allen,m,BRL,3376,2017-11-04,5
+19,Brian Scott,f,CLP,4436,2019-04-29,2
+20,Laura Young,f,MXN,3785,2018-10-20,5
+21,Kevin King,m,BRL,4384,2024-05-25,5
+22,Sharon Green,f,BRL,3231,2018-07-19,5
+23,Charles Adams,f,BRL,2241,2017-01-18,4
+24,Barbara Hill,f,MXN,4713,2024-01-15,3
+25,Jason Baker,m,BRL,2473,2017-07-15,4
