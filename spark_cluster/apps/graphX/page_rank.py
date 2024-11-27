@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from graphframes import GraphFrame
-from pyspark.sql.functions import split
+from pyspark.sql.functions import split, concat, lit
 import random
 
 spark = SparkSession.builder \
@@ -21,7 +21,9 @@ vertices = vertices.withColumn("userID", vertices["userID"].cast("int")) \
                    .withColumn("movieID", vertices["movieID"].cast("int"))
 
 user_vertices = vertices.select(vertices["userID"].alias("id")).distinct()
-movie_vertices = vertices.select(vertices["movieID"].alias("id")).distinct()
+movie_vertices = vertices.select(vertices["movieID"]).distinct() \
+                         .withColumn("id", concat(lit("M-"), vertices["movieID"].cast("string"))) \
+                         .select("id")
 all_vertices = user_vertices.union(movie_vertices)
 print("Vertices as DataFrame:")
 all_vertices.show()
@@ -32,9 +34,12 @@ connections = []
 for i in range(len(vertices_data)):
     num_connections = random.randint(1, min(5, len(vertices_data) - 1))
     for _ in range(num_connections):
-        target_node = random.choice([n for n in vertices_data if n != vertices_data[i]])
-        connection_type = random.choice(["rated", "liked", "watched", "recommended"])
-        connections.append((vertices_data[i][0], target_node[0], connection_type))
+        src_node = vertices_data[i][0]
+        target_node = random.choice([n for n in vertices_data if n[0] != src_node])[0]
+        if not str(src_node).startswith("M-") and str(target_node).startswith("M-"):
+            connections.append((src_node, target_node, random.choice(["rated", "liked", "watched", "recommended"])))
+        elif str(src_node).startswith("M-") and not str(target_node).startswith("M-"):
+            connections.append((target_node, src_node, random.choice(["rated", "liked", "watched", "recommended"])))
 
 edges = spark.createDataFrame(connections, ["src", "dst", "relationship"])
 print("Edges as DataFrame:")
@@ -43,7 +48,6 @@ edges.show(n=20)
 all_vertices = all_vertices.dropDuplicates(["id"])
 graph = GraphFrame(all_vertices, edges)
 
-graph = GraphFrame(all_vertices, edges)
 print("GraphFrame:")
 graph.vertices.show()
 graph.edges.show(truncate=False)
