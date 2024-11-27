@@ -5,13 +5,32 @@ import time
 from datetime import datetime
 import random
 
+
+import pandas as pd
+import random
+from faker import Faker
+
+# Initialize Faker
+fake = Faker()
+
+# Define potential values for categorical data
+playback_qualities = ['1080p', '720p', '480p', '360p']
+devices = ['Smartphone', 'Desktop', 'Smart TV', 'Tablet']
+recommendation_options = ['Yes', 'No']
+locations = [fake.city() + ", " + fake.country() for _ in range(10)]
+
 # Function to generate sensor data
-def generate_sensor_data():
-    sensor_ids = ['sensor1', 'sensor2', 'sensor3']
+def generate_video_stream_data():
     return {
-        'sensor_id': random.choice(sensor_ids),
-        'event_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'temperature': round(random.uniform(18.0, 30.0), 2)
+        "video_id": fake.uuid4(),
+        "video_title": fake.sentence(nb_words=3),
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        "playback_quality": random.choice(playback_qualities),
+        "buffering_duration": round(random.uniform(0, 15), 2),  # Buffering in seconds
+        "engagement_duration": random.randint(30, 7200),  # Engagement in seconds (30s to 2 hours)
+        "device_type": random.choice(devices),
+        "recommendation_clicked": random.choice(recommendation_options),
+        "viewer_location": random.choice(locations)
     }
 
 
@@ -39,7 +58,7 @@ if __name__ == "__main__":
         print(f"Producing messages to Kafka topic: {KAFKA_TOPIC}")
         while True:
             # Generate random sensor data
-            sensor_data = generate_sensor_data()
+            sensor_data = generate_video_stream_data()
             # Send data to Kafka
             producer.send(KAFKA_TOPIC, sensor_data)
             print(f"Sent: {sensor_data}")
