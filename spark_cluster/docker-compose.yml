@@ -7,10 +7,13 @@ services:
       - "9090:8080"
       - "7077:7077"
     volumes:
-       - ./apps:/opt/spark-apps
-       - ./data:/opt/spark-data
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
+      - ./jdbc:/opt/spark-jdbc
     environment:
       - "SPARK_LOCAL_IP=spark-master"
+    networks:
+      - spark_cluster_default
   spark-worker:
     image: spark-worker:latest
     depends_on:
@@ -22,5 +25,12 @@ services:
       - SPARK_DRIVER_MEMORY=128m
       - SPARK_EXECUTOR_MEMORY=256m
     volumes:
-       - ./apps:/opt/spark-apps
-       - ./data:/opt/spark-data
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
+      - ./jdbc:/opt/spark-jdbc
+    networks:
+      - spark_cluster_default
+
+networks:
+  spark_cluster_default:
+    external: true
